@@ -58,9 +58,9 @@
 
   /* Custom colors matching the design image */
   /* --navy: hsl(217 33% 17%); */
-  --navy: #004195;
-  /* --orange: hsl(20 94% 58%); */
-  --orange: #10c95e;
+  --navy: #1F294A;
+  --orange: hsl(20 94% 58%);
+  /* --orange: #10c95e; */
   --light-gray: hsl(210 40% 98%);
   --text-gray: hsl(215 13% 65%);
   --dark-gray: hsl(217 33% 17%);

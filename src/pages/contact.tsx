@@ -329,7 +329,7 @@ for (const [key, value] of formDataToSend.entries()) {
                         value={formData.phone}
                         onChange={handleChange}
                         className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange focus:border-transparent transition-colors"
-                        placeholder="+1 (908) 205-1993"
+                        placeholder="Enter Phone Number"
                         data-testid="input-contact-phone"
                       />
                     </div>

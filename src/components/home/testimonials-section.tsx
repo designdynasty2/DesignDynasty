@@ -20,7 +20,7 @@ const testimonials = [
   },
   {
     content:
-      "Outstanding service and exceptional results. DesignDynasty delivered exactly what we needed on time and within budget.",
+      "They do it with integrity and honesty... that's why I'm a Swagdata customer since 5 years.",
     name: "Emily Rodriguez",
     role: "Founder, Creative Solutions",
     image:
@@ -28,7 +28,7 @@ const testimonials = [
   },
   {
     content:
-      "Professional, reliable, and innovative. They transformed our business with their cutting-edge solutions.",
+      "They do it with integrity and honesty... that's why I'm a Swagdata customer since 5 years.",
     name: "Michael Chen",
     role: "CTO, Innovation Labs",
     image:
@@ -36,7 +36,7 @@ const testimonials = [
   },
   {
     content:
-      "Outstanding service and exceptional results. DesignDynasty delivered exactly what we needed on time and within budget.",
+      "They do it with integrity and honesty... that's why I'm a Swagdata customer since 5 years.",
     name: "Emily Rodriguez",
     role: "Founder, Creative Solutions",
     image:
@@ -44,39 +44,7 @@ const testimonials = [
   },
   {
     content:
-      "Professional, reliable, and innovative. They transformed our business with their cutting-edge solutions.",
-    name: "Michael Chen",
-    role: "CTO, Innovation Labs",
-    image:
-      "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&h=100",
-  },
-  {
-    content:
-      "Outstanding service and exceptional results. DesignDynasty delivered exactly what we needed on time and within budget.",
-    name: "Emily Rodriguez",
-    role: "Founder, Creative Solutions",
-    image:
-      "https://images.unsplash.com/photo-1494790108755-2616b612b3bb?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&h=100",
-  },
-  {
-    content:
-      "Professional, reliable, and innovative. They transformed our business with their cutting-edge solutions.",
-    name: "Michael Chen",
-    role: "CTO, Innovation Labs",
-    image:
-      "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&h=100",
-  },
-  {
-    content:
-      "Outstanding service and exceptional results. DesignDynasty delivered exactly what we needed on time and within budget.",
-    name: "Emily Rodriguez",
-    role: "Founder, Creative Solutions",
-    image:
-      "https://images.unsplash.com/photo-1494790108755-2616b612b3bb?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&h=100",
-  },
-  {
-    content:
-      "Professional, reliable, and innovative. They transformed our business with their cutting-edge solutions.",
+      "They do it with integrity and honesty... that's why I'm a Swagdata customer since 5 years.",
     name: "Michael Chen",
     role: "CTO, Innovation Labs",
     image:
@@ -148,28 +116,30 @@ export default function TestimonialsSection() {
                 </p>
 
                 {/* Author */}
-                <div className="flex items-center mt-auto">
-                  <img
-                    src={testimonial.image}
-                    alt={testimonial.name}
-                    className="w-10 h-10 sm:w-12 sm:h-12 rounded-full mr-4"
-                    data-testid={`img-testimonial-${index}`}
-                  />
-                  <div>
-                    <div
-                      className="font-semibold text-dark-gray text-sm sm:text-base"
-                      data-testid={`text-testimonial-name-${index}`}
-                    >
-                      {testimonial.name}
-                    </div>
-                    <div
-                      className="text-xs sm:text-sm text-text-gray"
-                      data-testid={`text-testimonial-role-${index}`}
-                    >
-                      {testimonial.role}
-                    </div>
-                  </div>
-                </div>
+                {/* Author */}
+<div className="flex items-center mt-auto">
+  <div
+    className="w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center rounded-full bg-[--orange] text-white font-bold mr-4"
+    data-testid={`avatar-testimonial-${index}`}
+  >
+    {testimonial.name.charAt(0)}
+  </div>
+  <div>
+    <div
+      className="font-semibold text-dark-gray text-sm sm:text-base"
+      data-testid={`text-testimonial-name-${index}`}
+    >
+      {testimonial.name}
+    </div>
+    {/* <div
+      className="text-xs sm:text-sm text-text-gray"
+      data-testid={`text-testimonial-role-${index}`}
+    >
+      {testimonial.role}
+    </div> */}
+  </div>
+</div>
+
               </div>
             </SwiperSlide>
           ))}

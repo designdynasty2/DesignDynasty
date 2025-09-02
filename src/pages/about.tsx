@@ -250,7 +250,7 @@ export default function About() {
                     className="stat-number"
                     data-testid="counter-experience-about"
                   >
-                    1+
+                    8+
                   </div>
                   <h3 className="text-lg md:text-xl font-semibold text-dark-gray mb-2">
                     Years of Excellence
