@@ -1,25 +1,41 @@
+import React, { useEffect, Suspense } from "react";
 import { Switch, Route, useLocation } from "wouter";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import NotFound from "@/pages/not-found";
-import Home from "@/pages/home";
-import About from "@/pages/about";
-import WebDevelopment from "@/pages/services/web-development";
-import GraphicDesign from "@/pages/services/graphic-design";
-import MobileDevelopment from "@/pages/services/mobile-development";
-import DigitalMarketing from "@/pages/services/digital-marketing";
-import EcommerceSolutions from "@/pages/services/ecommerce-solutions";
-import Portfolio from "@/pages/portfolio";
-import Pricing from "@/pages/pricing";
-import Blog from "@/pages/blog";
-import Contact from "@/pages/contact";
 import ChatbotWidget from "@/components/chatbot/chatbot-widget";
-import PrivacyPolicy from "@/pages/privacy";
-import services from "@/components/home/services";
-import Login from "@/components/login";
-import SignUp from "@/components/signup";
+import ScrollToTop from "./components/scroll-to-top";
+import AOS from "aos";
+import { applyRouteSEO } from "@/lib/seo";
+
+// Lazy-loaded routes for better performance
+const NotFound = React.lazy(() => import("@/pages/not-found"));
+const Home = React.lazy(() => import("@/pages/home"));
+const About = React.lazy(() => import("@/pages/about"));
+const WebDevelopment = React.lazy(
+  () => import("@/pages/services/web-development")
+);
+const GraphicDesign = React.lazy(
+  () => import("@/pages/services/graphic-design")
+);
+const MobileDevelopment = React.lazy(
+  () => import("@/pages/services/mobile-development")
+);
+const DigitalMarketing = React.lazy(
+  () => import("@/pages/services/digital-marketing")
+);
+const EcommerceSolutions = React.lazy(
+  () => import("@/pages/services/ecommerce-solutions")
+);
+const Portfolio = React.lazy(() => import("@/pages/portfolio"));
+const Pricing = React.lazy(() => import("@/pages/pricing"));
+const Blog = React.lazy(() => import("@/pages/blog"));
+const Contact = React.lazy(() => import("@/pages/contact"));
+const PrivacyPolicy = React.lazy(() => import("@/pages/privacy"));
+const services = React.lazy(() => import("@/components/home/services"));
+const Login = React.lazy(() => import("@/components/login"));
+const SignUp = React.lazy(() => import("@/components/signup"));
 function Router() {
   return (
     <Switch>
@@ -49,14 +65,10 @@ function Router() {
   );
 }
 
-import ScrollToTop from "./components/scroll-to-top";
-
-import { useEffect } from "react";
-import AOS from "aos";
-
 function App() {
   const [location] = useLocation();
 
+  // Init AOS once
   useEffect(() => {
     AOS.init({
       duration: 700,
@@ -64,25 +76,12 @@ function App() {
       once: true,
       offset: 40,
     });
-
-    // Add default AOS to all section elements without explicit data-aos
-    document.querySelectorAll("section:not([data-aos])").forEach((el) => {
-      el.setAttribute("data-aos", "fade-up");
-    });
-    // Also auto-animate any element explicitly marked with data-animate
-    document
-      .querySelectorAll("[data-animate]:not([data-aos])")
-      .forEach((el) => {
-        el.setAttribute("data-aos", "fade-up");
-      });
-
-    try {
-      AOS.refreshHard();
-    } catch {}
   }, []);
 
-  // Refresh AOS and auto-tag sections whenever route changes
+  // Apply SEO and refresh animations on route change
   useEffect(() => {
+    applyRouteSEO(location || "/");
+
     try {
       document.querySelectorAll("section:not([data-aos])").forEach((el) => {
         el.setAttribute("data-aos", "fade-up");
@@ -101,7 +100,9 @@ function App() {
       <TooltipProvider>
         <Toaster />
         <ScrollToTop />
-        <Router />
+        <Suspense fallback={<div className="p-6 text-center">Loading...</div>}>
+          <Router />
+        </Suspense>
         <ChatbotWidget />
       </TooltipProvider>
     </QueryClientProvider>
