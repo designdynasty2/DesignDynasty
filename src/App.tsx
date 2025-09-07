@@ -36,7 +36,7 @@ const Services = React.lazy(() => import("@/components/home/services"));
 const Login = React.lazy(() => import("@/components/login"));
 const SignUp = React.lazy(() => import("@/components/signup"));
 const ForgetPassword = React.lazy(() => import("@/components/forgetPassword"));
-const OtpPage = React.lazy(() => import("@/components/otpPage"));
+const OtpPage = React.lazy(() => import("@/components/OtpPage"));
 const ResetPassword = React.lazy(() => import("@/components/ResetPassword"));
 const PrivacyPolicy = React.lazy(() => import("@/pages/privacy"));
 const Dashboard = React.lazy(() => import("@/pages/Dashboard"));
