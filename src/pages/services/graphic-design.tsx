@@ -68,7 +68,6 @@ export default function GraphicDesign() {
 
   return (
     <div className="min-h-screen bg-white" data-testid="page-graphic-design">
-      <Header />
       <main>
         {/* Hero Section */}
         <section
@@ -324,7 +323,6 @@ export default function GraphicDesign() {
           </div>
         </section>
       </main>
-      <Footer />
     </div>
   );
 }

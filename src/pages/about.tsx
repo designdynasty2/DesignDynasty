@@ -151,7 +151,6 @@ export default function About() {
 
   return (
     <div className="min-h-screen bg-white" data-testid="page-about">
-      <Header />
       <main>
         {/* Hero Section */}
         <section
@@ -479,7 +478,6 @@ export default function About() {
           </div>
         </section>
       </main>
-      <Footer />
     </div>
   );
 }

@@ -1,6 +1,6 @@
 // import { useGSAPAnimation } from "@/hooks/use-gsap";
 // import { fadeUpAnimation } from "@/lib/gsap-utils";
-import { Link } from "wouter";
+import { Link } from "react-router-dom";
 import { HiComputerDesktop } from "react-icons/hi2";
 import { FaMobileAlt } from "react-icons/fa";
 import { IoColorPaletteOutline } from "react-icons/io5";
@@ -36,7 +36,7 @@ export default function ServicesSection() {
   // const titleRef = useGSAPAnimation(fadeUpAnimation);
 
   return (
-    <section className="py-16 sm:py-20 bg-white" data-testid="services-section">
+    <section className="py-16 sm:py-20 bg-white relative" data-testid="services-section">
       <div className="container mx-auto px-4 sm:px-6 lg:px-12">
         {/* Header */}
         <div className="text-center mb-12 sm:mb-16">

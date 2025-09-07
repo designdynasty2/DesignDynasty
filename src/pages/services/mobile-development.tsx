@@ -78,7 +78,6 @@ export default function MobileDevelopment() {
       className="min-h-screen bg-white"
       data-testid="page-mobile-development"
     >
-      <Header />
       <main>
         {/* Hero Section */}
         <section
@@ -360,7 +359,6 @@ export default function MobileDevelopment() {
           </div>
         </section>
       </main>
-      <Footer />
     </div>
   );
 }

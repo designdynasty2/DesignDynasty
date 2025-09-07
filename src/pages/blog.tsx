@@ -1,7 +1,7 @@
 import { useEffect } from "react";
-import Header from "@/components/layout/header";
-import Footer from "@/components/layout/footer";
-import { Link } from "wouter";
+// import Header from "@/components/layout/header";
+// import Footer from "@/components/layout/footer";
+import { Link } from "react-router-dom";
 import { useGSAPAnimation } from "@/hooks/use-gsap";
 import { fadeUpAnimation } from "@/lib/gsap-utils";
 import { Calendar, User, ArrowRight, Tag } from "lucide-react";
@@ -121,7 +121,6 @@ export default function Blog() {
 
   return (
     <div className="min-h-screen bg-white" data-testid="page-blog">
-      <Header />
       <main>
         {/* Hero Section */}
         <section
@@ -315,9 +314,7 @@ export default function Blog() {
             </div>
           </div>
         </section>
-
       </main>
-      <Footer />
     </div>
   );
 }

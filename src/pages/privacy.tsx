@@ -6,7 +6,6 @@ import Header from "../components/layout/header";
 const PrivacyPolicy = () => {
   return (
     <div className="bg-gray-50 text-gray-800">
-        <Header />
       {/* Hero Section */}
       <div className="gradient-bg text-white py-16 px-6 text-center">
         <h1 className="text-4xl md:text-5xl font-bold mb-4">Privacy Policy</h1>
@@ -105,7 +104,6 @@ const PrivacyPolicy = () => {
           </div>
         </section>
       </div>
-      <Footer />
     </div>
   );
 };

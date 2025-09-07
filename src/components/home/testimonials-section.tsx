@@ -56,7 +56,7 @@ export default function TestimonialsSection() {
   const titleRef = useGSAPAnimation(fadeUpAnimation);
 
   return (
-    <section className="py-20 bg-light-gray" data-testid="testimonials-section">
+    <section className="py-20 bg-light-gray relative" data-testid="testimonials-section">
       <div className="container mx-auto px-6">
         {/* Section Title */}
         <div className="text-center mb-12 md:mb-16">

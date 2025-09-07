@@ -148,7 +148,6 @@ export default function DigitalMarketing() {
 
   return (
     <div className="min-h-screen bg-white" data-testid="page-digital-marketing">
-      <Header />
       <main>
         {/* Hero Section */}
         <section
@@ -432,7 +431,6 @@ export default function DigitalMarketing() {
           </div>
         </section>
       </main>
-      <Footer />
     </div>
   );
 }

@@ -1,6 +1,6 @@
 import { useGSAPAnimation } from "@/hooks/use-gsap";
 import { heroAnimations } from "@/lib/gsap-utils";
-import { Link } from "wouter";
+import { Link } from "react-router-dom";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, Pagination, EffectFade } from "swiper/modules";
 

@@ -300,3 +300,7 @@ background: var(--orange);
   position: sticky;
   top: 0px;
 }
+#about-section{
+  position: relative;
+  /* z-index: 9999999999999999999999999999; */
+}

@@ -127,7 +127,6 @@ export default function Portfolio() {
 
   return (
     <div className="min-h-screen bg-white" data-testid="page-portfolio">
-      <Header />
       <main>
         {/* Hero Section */}
         <section
@@ -369,7 +368,6 @@ export default function Portfolio() {
           </div>
         </section>
       </main>
-      <Footer />
     </div>
   );
 }

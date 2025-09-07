@@ -1,14 +1,6 @@
-import Footer from "../layout/footer";
-import Header from "../layout/header";
 import ServicesSection from "./services-section";
 
-const services = () => {
-  return (
-    <>
-      <Header />
-      <ServicesSection />
-      <Footer />
-    </>
-  );
+const Services = () => {
+  return <ServicesSection />;
 };
-export default services;
+export default Services;

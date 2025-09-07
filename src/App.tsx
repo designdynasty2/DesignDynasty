@@ -1,15 +1,12 @@
-import React, { useEffect, Suspense } from "react";
-import { Switch, Route, useLocation } from "wouter";
+import React, { Suspense } from "react";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import ChatbotWidget from "@/components/chatbot/chatbot-widget";
-import ScrollToTop from "./components/scroll-to-top";
-import AOS from "aos";
-import { applyRouteSEO } from "@/lib/seo";
+import RootLayout from "@/components/layout/RootLayout";
 
-// Lazy-loaded routes for better performance
+// Lazy-loaded routes
 const NotFound = React.lazy(() => import("@/pages/not-found"));
 const Home = React.lazy(() => import("@/pages/home"));
 const About = React.lazy(() => import("@/pages/about"));
@@ -28,82 +25,98 @@ const DigitalMarketing = React.lazy(
 const EcommerceSolutions = React.lazy(
   () => import("@/pages/services/ecommerce-solutions")
 );
+const ProtectedRoute = React.lazy(
+  () => import("@/pages/ProtectedRoute")
+);
 const Portfolio = React.lazy(() => import("@/pages/portfolio"));
 const Pricing = React.lazy(() => import("@/pages/pricing"));
 const Blog = React.lazy(() => import("@/pages/blog"));
 const Contact = React.lazy(() => import("@/pages/contact"));
-const PrivacyPolicy = React.lazy(() => import("@/pages/privacy"));
-const services = React.lazy(() => import("@/components/home/services"));
+const Services = React.lazy(() => import("@/components/home/services"));
 const Login = React.lazy(() => import("@/components/login"));
 const SignUp = React.lazy(() => import("@/components/signup"));
-function Router() {
-  return (
-    <Switch>
-      <Route path="/" component={Home} />
-      <Route path="/about" component={About} />
-      <Route path="/services/web-development" component={WebDevelopment} />
-      <Route path="/services/graphic-design" component={GraphicDesign} />
-      <Route
-        path="/services/mobile-development"
-        component={MobileDevelopment}
-      />
-      <Route path="/services/digital-marketing" component={DigitalMarketing} />
-      <Route
-        path="/services/ecommerce-solutions"
-        component={EcommerceSolutions}
-      />
-      {/* <Route path="/portfolio" component={Portfolio} /> */}
-      <Route path="/pricing" component={Pricing} />
-      <Route path="/blog" component={Blog} />
-      <Route path="/contact" component={Contact} />
-      <Route path="/privacy-policy" component={PrivacyPolicy} />
-      <Route path="/services" component={services} />
-      <Route path="/login" component={Login} />
-      <Route path="/signup" component={SignUp} />
-      <Route component={NotFound} />
-    </Switch>
-  );
-}
+const ForgetPassword = React.lazy(() => import("@/components/forgetPassword"));
+const OtpPage = React.lazy(() => import("@/components/otpPage"));
+const ResetPassword = React.lazy(() => import("@/components/ResetPassword"));
+const PrivacyPolicy = React.lazy(() => import("@/pages/privacy"));
+const Dashboard = React.lazy(() => import("@/pages/Dashboard"));
+const UserManagement = React.lazy(() => import("@/pages/userManagement"));
+const AuthLayout = React.lazy(() => import("@/components/layout/AuthLayout"));
+
+export const baseUrl = `http://localhost:3000/`
+
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <RootLayout />,
+    errorElement: (
+      <Suspense fallback={<div className="p-6 text-center">Loading...</div>}>
+        <NotFound />
+      </Suspense>
+    ),
+    children: [
+      { index: true, element: <Home /> },
+      { path: "about", element: <About /> },
+
+      // Services
+      { path: "services", element: <Services /> },
+      { path: "services/web-development", element: <WebDevelopment /> },
+      { path: "services/graphic-design", element: <GraphicDesign /> },
+      { path: "services/mobile-development", element: <MobileDevelopment /> },
+      { path: "services/digital-marketing", element: <DigitalMarketing /> },
+      { path: "services/ecommerce-solutions", element: <EcommerceSolutions /> },
+
+      // Other pages
+      { path: "pricing", element: <Pricing /> },
+      { path: "blog", element: <Blog /> },
+      { path: "contact", element: <Contact /> },
+      { path: "privacy-policy", element: <PrivacyPolicy /> },
+
+      // 404 fallback
+      { path: "*", element: <NotFound /> },
+    ],
+  },
+
+  // Auth routes in a separate layout
+
+  { path: "login", element: <Login /> },
+  { path: "signup", element: <SignUp /> },
+  { path: "forget-password", element: <ForgetPassword /> },
+  { path: "otp-page", element: <OtpPage /> },
+  { path: "reset-password", element: <ResetPassword /> },
+  {
+    path: "/auth",
+    element: (
+      <Suspense fallback={<div className="p-6 text-center">Loading...</div>}>
+        <ProtectedRoute />
+      </Suspense>
+    ),
+    children: [
+      {
+        element: (
+          <Suspense
+            fallback={<div className="p-6 text-center">Loading...</div>}
+          >
+            <AuthLayout />
+          </Suspense>
+        ),
+        children: [
+          { path: "dashboard", element: <Dashboard /> },
+          { path: "user-management", element: <UserManagement /> },
+        ],
+      },
+    ],
+  },
+]);
 
 function App() {
-  const [location] = useLocation();
-
-  // Init AOS once
-  useEffect(() => {
-    AOS.init({
-      duration: 700,
-      easing: "ease-out-cubic",
-      once: true,
-      offset: 40,
-    });
-  }, []);
-
-  // Apply SEO and refresh animations on route change
-  useEffect(() => {
-    applyRouteSEO(location || "/");
-
-    try {
-      document.querySelectorAll("section:not([data-aos])").forEach((el) => {
-        el.setAttribute("data-aos", "fade-up");
-      });
-      document
-        .querySelectorAll("[data-animate]:not([data-aos])")
-        .forEach((el) => {
-          el.setAttribute("data-aos", "fade-up");
-        });
-      AOS.refreshHard();
-    } catch {}
-  }, [location]);
-
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <Toaster />
-        <ScrollToTop />
         <Suspense fallback={<div className="p-6 text-center">Loading...</div>}>
-          <Router />
+          <RouterProvider router={router} />
         </Suspense>
-        <ChatbotWidget />
       </TooltipProvider>
     </QueryClientProvider>
   );

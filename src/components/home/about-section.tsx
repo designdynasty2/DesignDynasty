@@ -11,7 +11,7 @@ export default function AboutSection() {
   const experienceCounterRef = useCounterAnimation(8);
 
   return (
-    <section className="py-16 sm:py-20 bg-light-gray" data-testid="about-section">
+    <section className="py-16 sm:py-20 bg-light-gray relative" data-testid="about-section">
       <div className="container mx-auto px-4 sm:px-6 lg:px-12">
         {/* Title */}
         <div className="text-center mb-12 sm:mb-16">

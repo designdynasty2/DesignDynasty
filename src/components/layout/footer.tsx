@@ -1,4 +1,4 @@
-import { Link } from "wouter";
+import { Link } from "react-router-dom";
 import { Facebook, Twitter, Linkedin, Mail, Phone, MapPin } from "lucide-react";
 
 export default function Footer() {
@@ -45,7 +45,7 @@ export default function Footer() {
             <ul className="space-y-3">
               <li>
                 <Link
-                  href="/services/web-development"
+                  to="/services/web-development"
                   className="text-gray-300 hover:text-orange transition"
                 >
                   Web Development
@@ -53,7 +53,7 @@ export default function Footer() {
               </li>
               <li>
                 <Link
-                  href="/services/graphic-design"
+                  to="/services/graphic-design"
                   className="text-gray-300 hover:text-orange transition"
                 >
                   Graphic Design
@@ -61,7 +61,7 @@ export default function Footer() {
               </li>
               <li>
                 <Link
-                  href="/services/mobile-development"
+                  to="/services/mobile-development"
                   className="text-gray-300 hover:text-orange transition"
                 >
                   Mobile App Development
@@ -69,7 +69,7 @@ export default function Footer() {
               </li>
               <li>
                 <Link
-                  href="/contact"
+                  to="/contact"
                   className="text-gray-300 hover:text-orange transition"
                 >
                   Consultation
@@ -84,23 +84,23 @@ export default function Footer() {
             <ul className="space-y-3">
               <li>
                 <Link
-                  href="/about"
+                  to="/about"
                   className="text-gray-300 hover:text-orange transition"
                 >
                   About Us
                 </Link>
               </li>
               <li>
-                <Link
-                  href="/blog"
+                {/* <Link
+                  to="/blog"
                   className="text-gray-300 hover:text-orange transition"
                 >
                   Blog
-                </Link>
+                </Link> */}
               </li>
               <li>
                 <Link
-                  href="/contact"
+                  to="/contact"
                   className="text-gray-300 hover:text-orange transition"
                 >
                   Contact
@@ -108,7 +108,7 @@ export default function Footer() {
               </li>
               <li>
                 <Link
-                  href="/privacy-policy"
+                  to="/privacy-policy"
                   className="text-gray-300 hover:text-orange transition"
                 >
                   Privacy Policy
@@ -123,15 +123,25 @@ export default function Footer() {
             <ul className="space-y-4 text-gray-300">
               <li className="flex items-start space-x-3">
                 <MapPin className="w-5 h-5 text-orange mt-1" />
-                <span>8197,Peggy ct, Zionsville, Indiana-46077</span>
+                <span>8197, Peggy Ct, Zionsville, Indiana-46077</span>
               </li>
               <li className="flex items-start space-x-3">
                 <Phone className="w-5 h-5 text-orange mt-1" />
-                <span>+1 (908) 205-1993</span>
+                <a
+                  href="tel:+19082051993"
+                  className="hover:text-orange transition"
+                >
+                  +1 (908) 205-1993
+                </a>
               </li>
               <li className="flex items-start space-x-3">
                 <Mail className="w-5 h-5 text-orange mt-1" />
-                <span>designdynasty84@gmail.com</span>
+                <a
+                  href="mailto:designdynasty84@gmail.com"
+                  className="hover:text-orange transition"
+                >
+                  designdynasty84@gmail.com
+                </a>
               </li>
             </ul>
           </div>

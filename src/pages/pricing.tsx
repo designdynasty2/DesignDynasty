@@ -1,10 +1,9 @@
-import { useEffect } from "react";
-import Header from "@/components/layout/header";
-import Footer from "@/components/layout/footer";
-import { Link } from "wouter";
+import { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { useGSAPAnimation } from "@/hooks/use-gsap";
 import { fadeUpAnimation } from "@/lib/gsap-utils";
 import { Check, X, HelpCircle } from "lucide-react";
+import { allPricingPlans } from "./pricingJson";
 
 const pricingPlans = [
   {
@@ -78,6 +77,7 @@ const pricingPlans = [
   },
 ];
 
+
 const faqs = [
   {
     question: "What's included in the project price?",
@@ -112,6 +112,15 @@ const faqs = [
 ];
 
 export default function Pricing() {
+  const [activeService, setActiveService] = useState("mobile-development");
+
+  const services = [
+    { key: "mobile-development", label: "Mobile Development" },
+    { key: "graphic-design", label: "Graphic Design" },
+    { key: "website-development", label: "Website Development" },
+    { key: "ecommerce", label: "E-commerce" },
+  ];
+
   useEffect(() => {
     document.title = "Pricing Plans - DesignDynasty";
     const metaDescription = document.querySelector('meta[name="description"]');
@@ -122,154 +131,160 @@ export default function Pricing() {
       );
     }
   }, []);
+  useEffect(() => {
+    const TIMEOUT_MS = 5 * 60 * 1000;
 
+    const checkExpiry = () => {
+      const loginTimeStr = localStorage.getItem("loginTime");
+      const token = localStorage.getItem("ddtoken");
+      if (!token || !loginTimeStr) {
+        // navigate("/");
+        // localStorage.clear();
+        return;
+      }
+      const loginTime = Number(loginTimeStr);
+      if (Number.isNaN(loginTime) || Date.now() - loginTime > TIMEOUT_MS) {
+        localStorage.clear();
+        navigate("/");
+      }
+    };
+
+    const intervalId = setInterval(checkExpiry, 1000 * 15); // check every 15s
+    // Run once immediately on mount
+    checkExpiry();
+
+    return () => clearInterval(intervalId);
+  }, []);
   const titleRef = useGSAPAnimation(fadeUpAnimation);
-
+  const ddtoken = localStorage.getItem("ddtoken");
+  const navigate = useNavigate();
   return (
-    <div className="min-h-screen bg-white" data-testid="page-pricing">
-      <Header />
-      <main>
-        {/* Hero Section */}
-        <section
-          className="gradient-bg text-white py-20"
-          data-testid="pricing-hero"
-        >
-          <div className="container mx-auto px-6">
-            <div className="max-w-4xl mx-auto text-center">
-              <h1
-                ref={titleRef as any}
-                className="text-4xl lg:text-6xl font-bold mb-6"
-                data-testid="text-pricing-title"
-              >
-                Simple, Transparent Pricing
-              </h1>
-              <p
-                className="text-xl lg:text-2xl text-gray-300"
-                data-testid="text-pricing-subtitle"
-              >
-                Choose the perfect plan for your business needs and scale as you
-                grow
-              </p>
-            </div>
-          </div>
-        </section>
+    <>
+      {ddtoken ? (
+        <div className="min-h-screen bg-white" data-testid="page-pricing">
+          <main>
+            {/* Hero Section */}
+            <section
+              className="gradient-bg text-white py-20"
+              data-testid="pricing-hero"
+            >
+              <div className="container mx-auto px-6">
+                <div className="max-w-4xl mx-auto text-center">
+                  <h1
+                    ref={titleRef as any}
+                    className="text-4xl lg:text-6xl font-bold mb-6"
+                    data-testid="text-pricing-title"
+                  >
+                    Simple, Transparent Pricing
+                  </h1>
+                  <p
+                    className="text-xl lg:text-2xl text-gray-300"
+                    data-testid="text-pricing-subtitle"
+                  >
+                    Choose the perfect plan for your business needs and scale as
+                    you grow
+                  </p>
+                </div>
+              </div>
+            </section>
 
-        {/* Pricing Plans */}
-        <section className="py-20 bg-light-gray" data-testid="pricing-plans">
-          <div className="container mx-auto px-6">
-            <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-              {pricingPlans.map((plan, index) => (
-                <div
-                  key={plan.name}
-                  className={`rounded-xl p-8 ${
-                    plan.isPopular
-                      ? "bg-orange text-white transform scale-105 shadow-xl"
-                      : "bg-white border-2 " + plan.color
-                  }`}
-                  data-testid={`pricing-plan-${plan.name.toLowerCase()}`}
-                >
-                  {plan.isPopular && (
-                    <div
-                      className="bg-white text-orange text-sm font-bold px-3 py-1 rounded-full text-center mb-4"
-                      data-testid="badge-most-popular"
-                    >
-                      Most Popular
-                    </div>
-                  )}
-
-                  <div className="text-center mb-8">
-                    <h3
-                      className={`text-2xl font-bold mb-2 ${
-                        plan.isPopular ? "text-white" : "text-dark-gray"
-                      }`}
-                      data-testid={`plan-name-${index}`}
-                    >
-                      {plan.name}
-                    </h3>
-                    <p
-                      className={`text-sm mb-4 ${
-                        plan.isPopular ? "text-orange-200" : "text-text-gray"
-                      }`}
-                      data-testid={`plan-description-${index}`}
-                    >
-                      {plan.description}
-                    </p>
-                    <div className="mb-4">
-                      <span
-                        className="text-4xl font-bold"
-                        data-testid={`plan-price-${index}`}
-                      >
-                        {plan.price}
-                      </span>
-                      <span
-                        className={
-                          plan.isPopular ? "text-orange-200" : "text-text-gray"
-                        }
-                      >
-                        {plan.period}
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="mb-8">
-                    <h4
-                      className={`font-semibold mb-4 ${
-                        plan.isPopular ? "text-white" : "text-dark-gray"
-                      }`}
-                    >
-                      What's included:
-                    </h4>
-                    <ul className="space-y-3">
-                      {plan.features.map((feature, featureIndex) => (
-                        <li
-                          key={featureIndex}
-                          className="flex items-center"
-                          data-testid={`plan-feature-${index}-${featureIndex}`}
-                        >
-                          <Check
-                            className={`w-5 h-5 mr-3 ${
-                              plan.isPopular ? "text-white" : "text-green-500"
-                            }`}
-                          />
-                          <span className="text-sm">{feature}</span>
-                        </li>
-                      ))}
-                      {plan.notIncluded.map((feature, featureIndex) => (
-                        <li
-                          key={`not-${featureIndex}`}
-                          className="flex items-center opacity-50"
-                          data-testid={`plan-not-included-${index}-${featureIndex}`}
-                        >
-                          <X
-                            className={`w-5 h-5 mr-3 ${
-                              plan.isPopular ? "text-white" : "text-gray-400"
-                            }`}
-                          />
-                          <span className="text-sm">{feature}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-
-                  <Link
-                    href="/contact"
-                    className={`w-full px-6 py-3 rounded-lg font-semibold transition-all text-center block ${
-                      plan.isPopular
-                        ? "bg-white text-orange hover:bg-gray-100"
+            {/* Pricing Plans */}
+            <div className="min-h-screen bg-white">
+              {/* Service Tabs */}
+              <div className="flex flex-wrap justify-center gap-4 py-8 pt-20 px-4 sm:px-6">
+                {services.map((service) => (
+                  <button
+                    key={service.key}
+                    onClick={() => setActiveService(service.key)}
+                    className={`px-4 sm:px-6 py-2 sm:py-3 rounded-full font-semibold transition-all ${
+                      activeService === service.key
+                        ? "bg-orange text-white"
                         : "border-2 border-orange text-orange hover:bg-orange hover:text-white"
                     }`}
-                    data-testid={`button-plan-${index}`}
                   >
-                    {plan.buttonText}
-                  </Link>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
+                    {service.label}
+                  </button>
+                ))}
+              </div>
 
-        {/* Comparison Table */}
-        <section className="py-20 bg-white" data-testid="pricing-comparison">
+              {/* Pricing Cards */}
+              <section className="py-12 bg-light-gray px-4 sm:px-6">
+                <div className="container mx-auto max-w-7xl">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+                    {allPricingPlans[activeService].map((plan) => (
+                      <div
+                        key={plan.name}
+                        className={`rounded-xl p-6 sm:p-8 transition-all ${
+                          plan.isPopular
+                            ? "bg-orange text-white transform scale-100 sm:scale-105 shadow-lg"
+                            : "bg-white border-2 " + plan.color
+                        }`}
+                      >
+                        {plan.isPopular && (
+                          <div className="bg-white text-orange text-xs sm:text-sm font-bold px-3 py-1 rounded-full text-center mb-4 inline-block">
+                            Most Popular
+                          </div>
+                        )}
+
+                        <div className="text-center mb-6 sm:mb-8">
+                          <h3 className="text-xl sm:text-2xl font-bold mb-2">
+                            {plan.name}
+                          </h3>
+                          <p className="text-sm sm:text-base mb-4">
+                            {plan.description}
+                          </p>
+                          <div className="mb-4">
+                            <span className="text-2xl sm:text-3xl font-bold">
+                              {plan.price}
+                            </span>
+                            <span className="text-text-gray ml-1">
+                              {plan.period}
+                            </span>
+                          </div>
+                        </div>
+
+                        <div className="mb-6 sm:mb-8">
+                          <h4 className="font-semibold mb-3 text-sm sm:text-base">
+                            What's included:
+                          </h4>
+                          <ul className="space-y-2 sm:space-y-3 text-xs sm:text-sm">
+                            {plan.features.map((feature, i) => (
+                              <li key={i} className="flex items-center">
+                                <Check className="w-4 h-4 mr-2 text-green-500" />
+                                {feature}
+                              </li>
+                            ))}
+                            {plan.notIncluded.map((feature, i) => (
+                              <li
+                                key={i}
+                                className="flex items-center opacity-50"
+                              >
+                                <X className="w-4 h-4 mr-2 text-gray-400" />
+                                {feature}
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+
+                        <Link
+                          to="/contact"
+                          className={`block text-center w-full px-4 py-2 sm:px-6 sm:py-3 rounded-lg font-semibold text-sm sm:text-base transition-all ${
+                            plan.isPopular
+                              ? "bg-white text-orange hover:bg-gray-100"
+                              : "border-2 border-orange text-orange hover:bg-orange hover:text-white"
+                          }`}
+                        >
+                          {plan.buttonText}
+                        </Link>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </section>
+            </div>
+
+            {/* Comparison Table */}
+            {/* <section className="py-20 bg-white" data-testid="pricing-comparison">
           <div className="container mx-auto px-6">
             <div className="text-center mb-16">
               <h2
@@ -339,86 +354,110 @@ export default function Pricing() {
               </table>
             </div>
           </div>
-        </section>
+        </section> */}
 
-        {/* FAQ Section */}
-        <section className="py-20 bg-light-gray" data-testid="pricing-faq">
-          <div className="container mx-auto px-6">
-            <div className="text-center mb-16">
-              <h2
-                className="text-3xl lg:text-4xl font-bold text-dark-gray mb-6"
-                data-testid="text-faq-title"
-              >
-                Frequently Asked Questions
-              </h2>
-            </div>
-
-            <div className="max-w-4xl mx-auto">
-              <div className="grid md:grid-cols-2 gap-8">
-                {faqs.map((faq, index) => (
-                  <div
-                    key={index}
-                    className="bg-white rounded-xl p-6 shadow-lg"
-                    data-testid={`faq-${index}`}
+            {/* FAQ Section */}
+            <section className="py-20 bg-light-gray" data-testid="pricing-faq">
+              <div className="container mx-auto px-6">
+                <div className="text-center mb-16">
+                  <h2
+                    className="text-3xl lg:text-4xl font-bold text-dark-gray mb-6"
+                    data-testid="text-faq-title"
                   >
-                    <div className="flex items-start mb-4">
-                      <HelpCircle className="w-6 h-6 text-orange mr-3 mt-1 flex-shrink-0" />
-                      <h3
-                        className="font-semibold text-dark-gray"
-                        data-testid={`faq-question-${index}`}
-                      >
-                        {faq.question}
-                      </h3>
-                    </div>
-                    <p
-                      className="text-text-gray pl-9"
-                      data-testid={`faq-answer-${index}`}
-                    >
-                      {faq.answer}
-                    </p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </section>
+                    Frequently Asked Questions
+                  </h2>
+                </div>
 
-        {/* CTA Section */}
-        <section className="py-20 bg-navy text-white" data-testid="pricing-cta">
-          <div className="container mx-auto px-6 text-center">
-            <h2
-              className="text-3xl lg:text-4xl font-bold mb-6"
-              data-testid="text-pricing-cta-title"
+                <div className="max-w-4xl mx-auto">
+                  <div className="grid md:grid-cols-2 gap-8">
+                    {faqs.map((faq, index) => (
+                      <div
+                        key={index}
+                        className="bg-white rounded-xl p-6 shadow-lg"
+                        data-testid={`faq-${index}`}
+                      >
+                        <div className="flex items-start mb-4">
+                          <HelpCircle className="w-6 h-6 text-orange mr-3 mt-1 flex-shrink-0" />
+                          <h3
+                            className="font-semibold text-dark-gray"
+                            data-testid={`faq-question-${index}`}
+                          >
+                            {faq.question}
+                          </h3>
+                        </div>
+                        <p
+                          className="text-text-gray pl-9"
+                          data-testid={`faq-answer-${index}`}
+                        >
+                          {faq.answer}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            {/* CTA Section */}
+            <section
+              className="py-20 bg-navy text-white"
+              data-testid="pricing-cta"
             >
-              Still Have Questions?
-            </h2>
-            <p
-              className="text-xl text-gray-300 mb-8 max-w-2xl mx-auto"
-              data-testid="text-pricing-cta-subtitle"
-            >
-              Our team is here to help you choose the right plan and answer any
-              questions about our services.
+              <div className="container mx-auto px-6 text-center">
+                <h2
+                  className="text-3xl lg:text-4xl font-bold mb-6"
+                  data-testid="text-pricing-cta-title"
+                >
+                  Still Have Questions?
+                </h2>
+                <p
+                  className="text-xl text-gray-300 mb-8 max-w-2xl mx-auto"
+                  data-testid="text-pricing-cta-subtitle"
+                >
+                  Our team is here to help you choose the right plan and answer
+                  any questions about our services.
+                </p>
+                <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                  <Link
+                    to="/contact"
+                    className="bg-orange hover:bg-orange/90 text-white px-8 py-4 rounded-lg font-semibold text-lg transition-all transform hover:scale-105"
+                    data-testid="button-contact-sales"
+                  >
+                    Contact Sales
+                  </Link>
+                  <a
+                    href="tel:+15551234567"
+                    className="border-2 border-white text-white hover:bg-white hover:text-navy px-8 py-4 rounded-lg font-semibold text-lg transition-all"
+                    data-testid="button-call-now"
+                  >
+                    Call Now: (555) 123-4567
+                  </a>
+                </div>
+              </div>
+            </section>
+          </main>
+        </div>
+      ) : (
+        <div className="py-10 flex items-center justify-center bg-light-gray px-4">
+          <div className="bg-white rounded-xl shadow-lg max-w-md w-full p-8 text-center">
+            <h1 className="text-2xl font-bold text-dark-gray mb-4">
+              Please Login to View Pricing Plans
+            </h1>
+            <p className="text-text-gray mb-6">
+              Unlock all features and pricing plans by logging into your
+              account.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link
-                href="/contact"
-                className="bg-orange hover:bg-orange/90 text-white px-8 py-4 rounded-lg font-semibold text-lg transition-all transform hover:scale-105"
-                data-testid="button-contact-sales"
-              >
-                Contact Sales
-              </Link>
-              <a
-                href="tel:+15551234567"
-                className="border-2 border-white text-white hover:bg-white hover:text-navy px-8 py-4 rounded-lg font-semibold text-lg transition-all"
-                data-testid="button-call-now"
-              >
-                Call Now: (555) 123-4567
-              </a>
-            </div>
+            <button
+              className="bg-orange hover:bg-orange/90 text-white px-6 py-3 rounded-lg font-semibold text-lg transition-all transform hover:scale-105"
+              onClick={() => {
+                navigate("/login");
+              }}
+            >
+              Login
+            </button>
           </div>
-        </section>
-      </main>
-      <Footer />
-    </div>
+        </div>
+      )}
+    </>
   );
 }

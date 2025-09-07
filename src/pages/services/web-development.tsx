@@ -1,7 +1,5 @@
 import { useEffect } from "react";
-import Header from "@/components/layout/header";
-import Footer from "@/components/layout/footer";
-import { Link } from "wouter";
+import { Link } from "react-router-dom";
 import {
   Code,
   Database,
@@ -167,7 +165,6 @@ export default function WebDevelopment() {
 
   return (
     <div className="min-h-screen bg-white" data-testid="page-web-development">
-      <Header />
       <main>
         {/* Hero Section */}
         <section
@@ -521,7 +518,6 @@ export default function WebDevelopment() {
           </div>
         </section>
       </main>
-      <Footer />
     </div>
   );
 }

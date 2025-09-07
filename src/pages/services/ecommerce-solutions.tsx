@@ -189,7 +189,6 @@ export default function EcommerceSolutions() {
       className="min-h-screen bg-white"
       data-testid="page-ecommerce-solutions"
     >
-      <Header />
       <main>
         {/* Hero Section */}
         <section
@@ -528,7 +527,6 @@ export default function EcommerceSolutions() {
           </div>
         </section>
       </main>
-      <Footer />
     </div>
   );
 }
