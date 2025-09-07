@@ -43,7 +43,7 @@ const Dashboard = React.lazy(() => import("@/pages/Dashboard"));
 const UserManagement = React.lazy(() => import("@/pages/userManagement"));
 const AuthLayout = React.lazy(() => import("@/components/layout/AuthLayout"));
 
-export const baseUrl = `https://designdynasty-backend.onrender.com`
+export const baseUrl = `https://designdynasty-backend.onrender.com/`
 
 const router = createBrowserRouter([
   {
