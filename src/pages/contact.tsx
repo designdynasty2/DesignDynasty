@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useGSAPAnimation } from "@/hooks/use-gsap";
 import {
   fadeUpAnimation,
@@ -8,6 +8,9 @@ import {
 import { MapPin, Phone, Mail, Clock, FileUp } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { baseUrl } from "../App";
+import { z } from "zod";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 const contactInfo = [
   {
@@ -36,6 +39,7 @@ const contactInfo = [
   },
 ];
 
+// Select options shown in the UI
 const serviceOptions = [
   "Web Development",
   "Mobile App Development",
@@ -46,22 +50,60 @@ const serviceOptions = [
   "Other",
 ];
 
-export default function Contact() {
-  const [errors, setErrors] = useState<{ [key: string]: string }>({});
-  const [loading, setLoading] = useState(false);
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    phone: "",
-    company: "",
-    service: "",
-    budget: "",
-    timeline: "",
-    message: "",
-    attachments: [],
-  });
+// Values submitted to the backend for service
+const serviceValueOptions = [
+  "web-development",
+  "mobile-app-development",
+  "graphic-design",
+  "brand-identity",
+  "e-commerce-solutions",
+  "consultation",
+  "other",
+] as const;
 
+type ServiceValue = (typeof serviceValueOptions)[number];
+
+// Schema using Zod
+const contactSchema = z.object({
+  name: z.string().trim().min(2, "Full Name must be at least 2 characters"),
+  email: z.string().trim().email("Please enter a valid email address"),
+  phone: z
+    .string()
+    .trim()
+    .regex(/^\d{10,15}$/, "Phone number must be 10 to 15 digits"),
+  company: z
+    .string()
+    .trim()
+    .min(2, "Company name must be at least 2 characters"),
+  service: z.enum(serviceValueOptions, {
+    errorMap: () => ({ message: "Service selection is required" }),
+  }),
+  message: z
+    .string()
+    .trim()
+    .min(10, "Project details must be at least 10 characters"),
+  // Optional attachments: max 5 files, <= 2MB each, pdf/doc/docx
+  attachments: z
+    .array(z.instanceof(File))
+    .max(5, "You can upload up to 5 files")
+    .refine((files) => files.every((f) => f.size <= 2 * 1024 * 1024), {
+      message: "Each file must be 2MB or less",
+    })
+    .refine(
+      (files) => files.every((f) => /(\.pdf|\.doc|\.docx)$/i.test(f.name)),
+      {
+        message: "Only PDF, DOC, DOCX files are allowed",
+      }
+    )
+    .optional()
+    .default([]),
+});
+
+type ContactForm = z.infer<typeof contactSchema>;
+
+export default function Contact() {
   const { toast } = useToast();
+
   const titleRef = useGSAPAnimation(fadeUpAnimation);
   const leftRef = useGSAPAnimation(fadeRightAnimation);
   const rightRef = useGSAPAnimation(fadeLeftAnimation);
@@ -77,51 +119,40 @@ export default function Contact() {
     }
   }, []);
 
-  const validateForm = () => {
-    const newErrors: { [key: string]: string } = {};
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    watch,
+    reset,
+    formState: { errors, isSubmitting },
+  } = useForm<ContactForm>({
+    resolver: zodResolver(contactSchema),
+    mode: "onBlur",
+    defaultValues: {
+      name: "",
+      email: "",
+      phone: "",
+      company: "",
+      service: undefined as unknown as ServiceValue, // force selection
+      message: "",
+      attachments: [],
+    },
+  });
 
-    if (!formData.name.trim()) newErrors.name = "Full Name is required";
-    if (!formData.email.trim()) newErrors.email = "Email is required";
-    else if (!/^\S+@\S+\.\S+$/.test(formData.email))
-      newErrors.email = "Invalid email format";
-    if (!formData.service) newErrors.service = "Service selection is required";
-    if (!formData.message.trim())
-      newErrors.message = "Project details are required";
-    const phone = formData.phone;
-    if (phone.length < 10 || phone.length > 15 || phone.trim() == "") {
-      newErrors.phone = "Phone number must be 10 to 15 digits";
-    }
-    if (!formData.company.trim()) newErrors.company = "Company is required";
-    else if (formData.company.trim().length < 2)
-      newErrors.company = "Company name must be at least 2 characters";
+  const attachments = watch("attachments") || [];
 
-    setErrors(newErrors);
-
-    return Object.keys(newErrors).length === 0;
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log(errors);
-
-    if (!validateForm()) {
-      console.log(errors);
-
-      return;
-    }
-
-    setLoading(true);
-
+  const onSubmit = async (data: ContactForm) => {
     try {
       const payload = new FormData();
-      payload.append("name", formData.name);
-      payload.append("email", formData.email);
-      payload.append("mobile", formData.phone);
-      payload.append("company", formData.company);
-      payload.append("service", formData.service);
-      payload.append("projectDetails", formData.message);
+      payload.append("name", data.name);
+      payload.append("email", data.email);
+      payload.append("mobile", data.phone);
+      payload.append("company", data.company);
+      payload.append("service", data.service);
+      payload.append("projectDetails", data.message);
 
-      formData.attachments.forEach((file) =>
+      (data.attachments || []).forEach((file) =>
         payload.append("attachment", file)
       );
 
@@ -130,49 +161,29 @@ export default function Contact() {
         body: payload,
       });
 
-      const data = await response.json();
-
-      if (!response.ok) throw new Error(data.error || "Failed to send message");
+      const resData = await response.json();
+      if (!response.ok)
+        throw new Error(resData.error || "Failed to send message");
 
       toast({
         title: "Success!",
-        description: data.message || "Message sent successfully",
+        description: resData.message || "Message sent successfully",
         className: "bg-green-500 text-white border-green-600",
       });
-      setFormData({
-        name: "",
-        email: "",
-        phone: "",
-        company: "",
-        service: "",
-        budget: "",
-        timeline: "",
-        message: "",
-        attachments: [],
-      });
-      setErrors({});
+
+      reset();
     } catch (err: any) {
       toast({
         title: "Error",
-        description: err.message || "Failed to send message",
+        description: err?.message || "Failed to send message",
         variant: "destructive",
       });
-    } finally {
-      setLoading(false);
     }
-  };
-
-  const handleChange = (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >
-  ) => {
-    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
-    setErrors((prev) => ({ ...prev, [e.target.name]: " " }));
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
+    // Pre-filter to provide UI feedback and avoid setting invalid files
     const validFiles = files.filter((file) => {
       if (file.size > 2 * 1024 * 1024) {
         toast({
@@ -182,9 +193,18 @@ export default function Contact() {
         });
         return false;
       }
+      if (!/(\.pdf|\.doc|\.docx)$/i.test(file.name)) {
+        toast({
+          title: "Invalid file type",
+          description: `${file.name} is not PDF/DOC/DOCX.`,
+          variant: "destructive",
+        });
+        return false;
+      }
       return true;
     });
-    setFormData((prev) => ({ ...prev, attachments: validFiles }));
+
+    setValue("attachments", validFiles as any, { shouldValidate: true });
   };
 
   return (
@@ -310,9 +330,10 @@ export default function Contact() {
 
                 <div ref={rightRef as any}>
                   <form
-                    onSubmit={handleSubmit}
+                    onSubmit={handleSubmit(onSubmit)}
                     className="space-y-6"
                     data-testid="form-contact-extended"
+                    noValidate
                   >
                     <div className="grid md:grid-cols-2 gap-6">
                       <div>
@@ -325,16 +346,19 @@ export default function Contact() {
                         <input
                           type="text"
                           id="name"
-                          name="name"
-                          value={formData.name}
-                          onChange={handleChange}
-                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange focus:border-transparent transition-colors"
+                          {...register("name")}
+                          className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:border-transparent transition-colors ${
+                            errors.name
+                              ? "border-red-500 focus:ring-red-500"
+                              : "border-gray-300 focus:ring-orange"
+                          }`}
                           placeholder="Your full name"
+                          aria-invalid={!!errors.name}
                           data-testid="input-contact-name"
                         />
                         {errors.name && (
                           <p className="text-red-500 text-sm mt-1">
-                            {errors.name}
+                            {errors.name.message}
                           </p>
                         )}
                       </div>
@@ -348,16 +372,19 @@ export default function Contact() {
                         <input
                           type="email"
                           id="email"
-                          name="email"
-                          value={formData.email}
-                          onChange={handleChange}
-                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange focus:border-transparent transition-colors"
+                          {...register("email")}
+                          className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:border-transparent transition-colors ${
+                            errors.email
+                              ? "border-red-500 focus:ring-red-500"
+                              : "border-gray-300 focus:ring-orange"
+                          }`}
                           placeholder="your@email.com"
+                          aria-invalid={!!errors.email}
                           data-testid="input-contact-email"
                         />
                         {errors.email && (
                           <p className="text-red-500 text-sm mt-1">
-                            {errors.email}
+                            {errors.email.message}
                           </p>
                         )}
                       </div>
@@ -369,21 +396,25 @@ export default function Contact() {
                           htmlFor="phone"
                           className="block text-sm font-medium text-dark-gray mb-2"
                         >
-                          Phone Number
+                          Phone Number *
                         </label>
                         <input
-                          type="number"
+                          type="tel"
                           id="phone"
-                          name="phone"
-                          value={formData.phone}
-                          onChange={handleChange}
-                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange focus:border-transparent transition-colors"
+                          inputMode="numeric"
                           placeholder="Enter Phone Number"
+                          {...register("phone")}
+                          className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:border-transparent transition-colors ${
+                            errors.phone
+                              ? "border-red-500 focus:ring-red-500"
+                              : "border-gray-300 focus:ring-orange"
+                          }`}
+                          aria-invalid={!!errors.phone}
                           data-testid="input-contact-phone"
                         />
                         {errors.phone && (
                           <p className="text-red-500 text-sm mt-1">
-                            {errors.phone}
+                            {errors.phone.message}
                           </p>
                         )}
                       </div>
@@ -392,21 +423,24 @@ export default function Contact() {
                           htmlFor="company"
                           className="block text-sm font-medium text-dark-gray mb-2"
                         >
-                          Company
+                          Company *
                         </label>
                         <input
                           type="text"
                           id="company"
-                          name="company"
-                          value={formData.company}
-                          onChange={handleChange}
-                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange focus:border-transparent transition-colors"
                           placeholder="Your company name"
+                          {...register("company")}
+                          className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:border-transparent transition-colors ${
+                            errors.company
+                              ? "border-red-500 focus:ring-red-500"
+                              : "border-gray-300 focus:ring-orange"
+                          }`}
+                          aria-invalid={!!errors.company}
                           data-testid="input-contact-company"
                         />
                         {errors.company && (
                           <p className="text-red-500 text-sm mt-1">
-                            {errors.company}
+                            {errors.company.message}
                           </p>
                         )}
                       </div>
@@ -421,19 +455,15 @@ export default function Contact() {
                       </label>
                       <select
                         id="service"
-                        name="service"
-                        value={formData.service}
-                        onChange={handleChange}
-                        required
-                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange focus:border-transparent transition-colors"
+                        {...register("service")}
+                        className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:border-transparent transition-colors ${
+                          errors.service
+                            ? "border-red-500 focus:ring-red-500"
+                            : "border-gray-300 focus:ring-orange"
+                        }`}
+                        aria-invalid={!!errors.service}
                         data-testid="select-contact-service"
                       >
-                        {errors.service && (
-                          <p className="text-red-500 text-sm mt-1">
-                            {errors.service}
-                          </p>
-                        )}
-
                         <option value="">Select a service</option>
                         {serviceOptions.map((option) => (
                           <option
@@ -444,6 +474,11 @@ export default function Contact() {
                           </option>
                         ))}
                       </select>
+                      {errors.service && (
+                        <p className="text-red-500 text-sm mt-1">
+                          {errors.service.message}
+                        </p>
+                      )}
                     </div>
 
                     <div>
@@ -455,17 +490,20 @@ export default function Contact() {
                       </label>
                       <textarea
                         id="message"
-                        name="message"
-                        value={formData.message}
-                        onChange={handleChange}
                         rows={6}
-                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange focus:border-transparent transition-colors"
                         placeholder="Please describe your project requirements, goals, and any specific features you need..."
+                        {...register("message")}
+                        className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:border-transparent transition-colors ${
+                          errors.message
+                            ? "border-red-500 focus:ring-red-500"
+                            : "border-gray-300 focus:ring-orange"
+                        }`}
+                        aria-invalid={!!errors.message}
                         data-testid="textarea-contact-message"
                       />
                       {errors.message && (
                         <p className="text-red-500 text-sm mt-1">
-                          {errors.message}
+                          {errors.message.message}
                         </p>
                       )}
                     </div>
@@ -485,7 +523,7 @@ export default function Contact() {
                           Drop files here or click to upload
                         </p>
                         <p className="text-text-gray text-xs mt-1">
-                          Supported formats: PDF, DOC (Max 1MB)
+                          Supported formats: PDF, DOC (Max 2MB)
                         </p>
 
                         <input
@@ -493,50 +531,38 @@ export default function Contact() {
                           type="file"
                           className="hidden"
                           accept=".pdf,.doc,.docx"
-                          onChange={(e) => {
-                            const files = Array.from(e.target.files || []);
-                            const validFiles = files.filter((file) => {
-                              if (file.size > 2 * 1024 * 1024) {
-                                toast({
-                                  title: "File too large",
-                                  description: `${file.name} exceeds 2MB limit.`,
-                                  variant: "destructive",
-                                });
-                                return false;
-                              }
-                              return true;
-                            });
-
-                            setFormData((prev) => ({
-                              ...prev,
-                              attachments: validFiles,
-                            }));
-                          }}
+                          multiple
+                          onChange={handleFileChange}
                           data-testid="input-contact-attachments"
                         />
 
                         {/* Show selected files */}
-                        {formData.attachments.length > 0 && (
+                        {attachments.length > 0 && (
                           <div className="mt-4 text-left">
                             <p className="text-sm font-medium text-dark-gray mb-2">
                               Selected files:
                             </p>
                             <ul className="list-disc list-inside text-sm text-text-gray">
-                              {formData.attachments.map((file, index) => (
+                              {attachments.map((file, index) => (
                                 <li key={index}>{file.name}</li>
                               ))}
                             </ul>
                           </div>
+                        )}
+                        {errors.attachments && (
+                          <p className="text-red-500 text-sm mt-2">
+                            {errors.attachments.message as any}
+                          </p>
                         )}
                       </div>
                     </div>
 
                     <button
                       type="submit"
-                      disabled={loading}
-                      className="w-full bg-orange text-white py-3 rounded-lg"
+                      disabled={isSubmitting}
+                      className="w-full bg-orange text-white py-3 rounded-lg disabled:opacity-60"
                     >
-                      {loading ? "Sending..." : "Send Message"}
+                      {isSubmitting ? "Sending..." : "Send Message"}
                     </button>
                   </form>
                 </div>
@@ -563,15 +589,14 @@ export default function Contact() {
                   src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3057.1741630093647!2d-86.31634472529237!3d39.98221308197296!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x88135440e6c375bb%3A0x64c8c024606d6f1d!2s8197%20Peggy%20Ct%2C%20Zionsville%2C%20IN%2046077%2C%20USA!5e0!3m2!1sen!2sin!4v1756655175444!5m2!1sen!2sin"
                   width="100%"
                   height="100%"
-                  allowfullscreen=""
+                  allowFullScreen
                   loading="lazy"
-                  referrerpolicy="no-referrer-when-downgrade"
+                  referrerPolicy="no-referrer-when-downgrade"
                 ></iframe>
               </div>
             </div>
           </section>
         </main>
-        {/* <div className="elfsight-app-b82afd7c-a99e-4388-b77f-9c7ce9f9e2b4" data-elfsight-app-lazy></div> */}
       </div>
     </>
   );
