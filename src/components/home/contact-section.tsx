@@ -1,35 +1,47 @@
-import { useState } from "react";
 import { useGSAPAnimation } from "@/hooks/use-gsap";
 import { fadeLeftAnimation, fadeRightAnimation } from "@/lib/gsap-utils";
 import { MapPin, Phone, Mail } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { baseUrl } from "../../App";
+import { z } from "zod";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import React from "react";
+
+const contactSchema = z.object({
+  name: z.string().trim().min(2, "Name must be at least 2 characters"),
+  email: z.string().trim().email("Please enter a valid email address"),
+  service: z.string().min(1, "Please select a service"),
+  message: z.string().trim().min(10, "Message must be at least 10 characters"),
+});
+
+type ContactForm = z.infer<typeof contactSchema>;
 
 export default function ContactSection() {
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    service: "",
-    message: "",
-  });
-
-  const [loading, setLoading] = useState(false);
   const { toast } = useToast();
 
   const leftRef = useGSAPAnimation(fadeRightAnimation);
   const rightRef = useGSAPAnimation(fadeLeftAnimation);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+    reset,
+  } = useForm<ContactForm>({
+    resolver: zodResolver(contactSchema),
+    defaultValues: { name: "", email: "", service: "", message: "" },
+    mode: "onBlur", // validate on blur for better UX
+  });
 
+  const onSubmit = async (data: ContactForm) => {
     try {
       const res = await fetch(`${baseUrl}auth/contact`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(data),
       });
 
       if (!res.ok) throw new Error("Failed to send message");
@@ -40,27 +52,14 @@ export default function ContactSection() {
           "Thank you for reaching out! Our team will connect with you within 24 hours.",
         className: "bg-green-500 text-white border-green-600",
       });
-      setFormData({ name: "", email: "", service: "", message: "" });
+      reset();
     } catch (err) {
       toast({
         title: "Submission Failed ❌",
         description: "Please try again or email us directly.",
         variant: "destructive",
       });
-    } finally {
-      setLoading(false);
     }
-  };
-
-  const handleChange = (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
-    >
-  ) => {
-    setFormData((prev) => ({
-      ...prev,
-      [e.target.name]: e.target.value,
-    }));
   };
 
   return (
@@ -153,9 +152,10 @@ export default function ContactSection() {
           {/* Contact Form */}
           <div ref={rightRef as any}>
             <form
-              onSubmit={handleSubmit}
+              onSubmit={handleSubmit(onSubmit)}
               className="space-y-6 p-8 px-0 w-[100%]"
               data-testid="form-contact"
+              noValidate
             >
               <div>
                 <label
@@ -167,14 +167,21 @@ export default function ContactSection() {
                 <input
                   type="text"
                   id="name"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleChange}
-                  className="w-[100%] px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange focus:border-transparent transition-all"
+                  {...register("name")}
+                  className={`w-[100%] px-4 py-3 border rounded-lg transition-all focus:ring-2 focus:border-transparent ${
+                    errors.name
+                      ? "border-red-500 focus:ring-red-500"
+                      : "border-gray-300 focus:ring-orange"
+                  }`}
                   placeholder="Your Name"
-                  required
+                  aria-invalid={!!errors.name}
                   data-testid="input-name"
                 />
+                {errors.name && (
+                  <p className="mt-1 text-sm text-red-600" role="alert">
+                    {errors.name.message}
+                  </p>
+                )}
               </div>
 
               <div>
@@ -187,14 +194,21 @@ export default function ContactSection() {
                 <input
                   type="email"
                   id="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange focus:border-transparent transition-all"
+                  {...register("email")}
+                  className={`w-full px-4 py-3 border rounded-lg transition-all focus:ring-2 focus:border-transparent ${
+                    errors.email
+                      ? "border-red-500 focus:ring-red-500"
+                      : "border-gray-300 focus:ring-orange"
+                  }`}
                   placeholder="your@email.com"
-                  required
+                  aria-invalid={!!errors.email}
                   data-testid="input-email"
                 />
+                {errors.email && (
+                  <p className="mt-1 text-sm text-red-600" role="alert">
+                    {errors.email.message}
+                  </p>
+                )}
               </div>
 
               <div>
@@ -206,11 +220,13 @@ export default function ContactSection() {
                 </label>
                 <select
                   id="service"
-                  name="service"
-                  value={formData.service}
-                  onChange={handleChange}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange focus:border-transparent transition-all"
-                  required
+                  {...register("service")}
+                  className={`w-full px-4 py-3 border rounded-lg transition-all focus:ring-2 focus:border-transparent ${
+                    errors.service
+                      ? "border-red-500 focus:ring-red-500"
+                      : "border-gray-300 focus:ring-orange"
+                  }`}
+                  aria-invalid={!!errors.service}
                   data-testid="select-service"
                 >
                   <option value="">Select a service</option>
@@ -221,6 +237,11 @@ export default function ContactSection() {
                   </option>
                   <option value="consultation">IT Consultation</option>
                 </select>
+                {errors.service && (
+                  <p className="mt-1 text-sm text-red-600" role="alert">
+                    {errors.service.message}
+                  </p>
+                )}
               </div>
 
               <div>
@@ -232,24 +253,31 @@ export default function ContactSection() {
                 </label>
                 <textarea
                   id="message"
-                  name="message"
-                  value={formData.message}
-                  onChange={handleChange}
                   rows={5}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange focus:border-transparent transition-all"
+                  {...register("message")}
+                  className={`w-full px-4 py-3 border rounded-lg transition-all focus:ring-2 focus:border-transparent ${
+                    errors.message
+                      ? "border-red-500 focus:ring-red-500"
+                      : "border-gray-300 focus:ring-orange"
+                  }`}
                   placeholder="Tell us about your project goals, requirements, and timeline..."
-                  required
+                  aria-invalid={!!errors.message}
                   data-testid="textarea-message"
                 />
+                {errors.message && (
+                  <p className="mt-1 text-sm text-red-600" role="alert">
+                    {errors.message.message}
+                  </p>
+                )}
               </div>
 
               <button
                 type="submit"
-                disabled={loading}
+                disabled={isSubmitting}
                 className="w-full bg-orange hover:bg-orange/90 text-white px-8 py-4 rounded-lg font-semibold text-lg transition-all transform hover:scale-105 disabled:opacity-50"
                 data-testid="button-send-message"
               >
-                {loading ? "Sending..." : "Send Message"}
+                {isSubmitting ? "Sending..." : "Send Message"}
               </button>
             </form>
           </div>
