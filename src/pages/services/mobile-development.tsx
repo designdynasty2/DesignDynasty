@@ -101,7 +101,7 @@ export default function MobileDevelopment() {
                 exceptional user experiences
               </p>
               <Link
-                href="/contact"
+                to="/contact"
                 className="bg-orange hover:bg-orange/90 text-white px-8 py-4 rounded-lg font-semibold text-lg transition-all transform hover:scale-105"
                 data-testid="button-get-mobile-quote"
               >
