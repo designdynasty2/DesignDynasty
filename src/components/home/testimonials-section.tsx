@@ -37,7 +37,7 @@ const testimonials = [
   {
     content:
       "I loved how the team patiently walked me through every step of the process. They made sure the website reflected my brand identity perfectly. Highly recommend Design Dynasty for anyone starting fresh online.",
-    name: "Emily Rodriguez",
+    name: "Rohit S",
     role: "Startup Founder",
     image:
       "https://images.unsplash.com/photo-1494790108755-2616b612b3bb?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&h=100",
