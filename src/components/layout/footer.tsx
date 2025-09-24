@@ -137,10 +137,10 @@ export default function Footer() {
               <li className="flex items-start space-x-3">
                 <Mail className="w-5 h-5 text-orange mt-1" />
                 <a
-                  href="mailto:designdynasty84@gmail.com"
+                  href="mailto:info@thedesigndynasty.com"
                   className="hover:text-orange transition"
                 >
-                  designdynasty84@gmail.com
+                  info@thedesigndynasty.com
                 </a>
               </li>
             </ul>
