@@ -10,8 +10,8 @@ const PrivacyPolicy = () => {
       <div className="gradient-bg text-white py-16 px-6 text-center">
         <h1 className="text-4xl md:text-5xl font-bold mb-4">Privacy Policy</h1>
         <p className="max-w-2xl mx-auto text-lg opacity-90">
-          Your privacy matters to us. Learn how we collect, use, and protect your
-          personal information.
+          Your privacy matters to us. Learn how we collect, use, and protect
+          your personal information.
         </p>
       </div>
 
@@ -30,17 +30,25 @@ const PrivacyPolicy = () => {
 
         {/* Information We Collect */}
         <section>
-          <h2 className="text-2xl font-semibold mb-3">2. Information We Collect</h2>
+          <h2 className="text-2xl font-semibold mb-3">
+            2. Information We Collect
+          </h2>
           <ul className="list-disc list-inside text-gray-700 space-y-2">
             <li>Personal details such as name, email, and phone number.</li>
-            <li>Information you provide when requesting services or support.</li>
-            <li>Usage data such as browser type, IP address, and device info.</li>
+            <li>
+              Information you provide when requesting services or support.
+            </li>
+            <li>
+              Usage data such as browser type, IP address, and device info.
+            </li>
           </ul>
         </section>
 
         {/* How We Use Information */}
         <section>
-          <h2 className="text-2xl font-semibold mb-3">3. How We Use Your Information</h2>
+          <h2 className="text-2xl font-semibold mb-3">
+            3. How We Use Your Information
+          </h2>
           <p className="text-gray-700 leading-relaxed">
             We use your data to provide, improve, and personalize our services.
             This includes:
@@ -64,7 +72,9 @@ const PrivacyPolicy = () => {
 
         {/* Sharing Information */}
         <section>
-          <h2 className="text-2xl font-semibold mb-3">5. Sharing Information</h2>
+          <h2 className="text-2xl font-semibold mb-3">
+            5. Sharing Information
+          </h2>
           <p className="text-gray-700 leading-relaxed">
             We do not sell or rent your personal data. Information may only be
             shared with trusted partners when necessary to deliver our services,
@@ -76,9 +86,9 @@ const PrivacyPolicy = () => {
         <section>
           <h2 className="text-2xl font-semibold mb-3">6. Cookies</h2>
           <p className="text-gray-700 leading-relaxed">
-            Our website may use cookies to improve user experience, track website
-            performance, and provide relevant content. You can disable cookies in
-            your browser settings.
+            Our website may use cookies to improve user experience, track
+            website performance, and provide relevant content. You can disable
+            cookies in your browser settings.
           </p>
         </section>
 
@@ -87,7 +97,8 @@ const PrivacyPolicy = () => {
           <h2 className="text-2xl font-semibold mb-3">7. Your Rights</h2>
           <p className="text-gray-700 leading-relaxed">
             You have the right to access, update, or request deletion of your
-            personal data. Please contact us if you wish to exercise these rights.
+            personal data. Please contact us if you wish to exercise these
+            rights.
           </p>
         </section>
 
@@ -95,12 +106,13 @@ const PrivacyPolicy = () => {
         <section>
           <h2 className="text-2xl font-semibold mb-3">8. Contact Us</h2>
           <p className="text-gray-700 leading-relaxed">
-            If you have questions about this Privacy Policy, please reach out to us:
+            If you have questions about this Privacy Policy, please reach out to
+            us:
           </p>
           <div className="mt-4 bg-gray-100 p-6 rounded-lg shadow-md">
-            <p className="font-medium">📧 Email: support@yourcompany.com</p>
+            <p className="font-medium">📧 Email: info@thedesigndynasty.com</p>
             <p className="font-medium">📞 Phone: +1 (908) 205-1993</p>
-            <p className="font-medium">🏢 Address: Chennai, Tamil Nadu, India</p>
+            <p className="font-medium">🏢 Address: Zionsville, Indiana</p>
           </div>
         </section>
       </div>
