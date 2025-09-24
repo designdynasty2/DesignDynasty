@@ -28,8 +28,8 @@ const contactInfo = [
   {
     icon: Mail,
     title: "Email",
-    content: "designdynasty84@gmail.com",
-    link: "mailto:designdynasty84@gmail.com",
+    content: "info@thedesigndynasty.com",
+    link: "mailto:info@thedesigndynasty.com",
   },
   {
     icon: Clock,
@@ -44,7 +44,6 @@ const serviceOptions = [
   "Web Development",
   "Mobile App Development",
   "Graphic Design",
-  "Brand Identity",
   "E-commerce Solutions",
   "Consultation",
   "Other",
@@ -55,7 +54,6 @@ const serviceValueOptions = [
   "web-development",
   "mobile-app-development",
   "graphic-design",
-  "brand-identity",
   "e-commerce-solutions",
   "consultation",
   "other",
