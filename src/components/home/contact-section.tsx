@@ -138,10 +138,10 @@ export default function ContactSection() {
                   <h4 className="font-semibold text-dark-gray">Email Us</h4>
                   <p className="text-text-gray text-[15px]">
                     <a
-                      href="mailto:designdynasty84@gmail.com"
+                      href="mailto:info@thedesigndynasty.com"
                       className="hover:text-orange"
                     >
-                      designdynasty84@gmail.com
+                      info@thedesigndynasty.com
                     </a>
                   </p>
                 </div>
@@ -235,7 +235,6 @@ export default function ContactSection() {
                   <option value="mobile-development">
                     Mobile App Development
                   </option>
-                  <option value="consultation">IT Consultation</option>
                 </select>
                 {errors.service && (
                   <p className="mt-1 text-sm text-red-600" role="alert">
