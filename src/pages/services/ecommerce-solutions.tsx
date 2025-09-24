@@ -510,7 +510,7 @@ export default function EcommerceSolutions() {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
               <Link
-                href="/contact"
+                to="/contact"
                 className="bg-orange hover:bg-orange/90 text-white px-6 md:px-8 py-3 md:py-4 rounded-lg font-semibold text-base md:text-lg transition-all transform hover:scale-105 w-full sm:w-auto text-center"
                 data-testid="button-start-project"
               >
