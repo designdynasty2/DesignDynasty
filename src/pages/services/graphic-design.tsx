@@ -1,7 +1,6 @@
 import { useEffect } from "react";
-import Header from "@/components/layout/header";
-import Footer from "@/components/layout/footer";
-import { Link } from "wouter";
+import { Link } from "react-router-dom";
+
 import { Palette, Image, Layout, Printer } from "lucide-react";
 
 const designServices = [
@@ -97,6 +96,7 @@ export default function GraphicDesign() {
               >
                 Get a Design Quote
               </Link>
+              
             </div>
           </div>
         </section>

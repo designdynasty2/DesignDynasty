@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import Header from "@/components/layout/header";
 import Footer from "@/components/layout/footer";
-import { Link } from "wouter";
+import { Link } from "react-router-dom";
 import {
   ShoppingCart,
   CreditCard,
