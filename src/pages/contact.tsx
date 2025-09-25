@@ -66,9 +66,13 @@ const contactSchema = z.object({
   name: z.string().trim().min(2, "Full Name must be at least 2 characters"),
   email: z.string().trim().email("Please enter a valid email address"),
   phone: z
-    .string()
-    .trim()
-    .regex(/^\d{10,15}$/, "Phone number must be 10 to 15 digits"),
+  .string()
+  .trim()
+  .regex(
+    /^\+?[0-9]{1,3}[\s.-]?\(?[0-9]{1,4}\)?[\s.-]?[0-9]{3,4}[\s.-]?[0-9]{3,4}$/,
+    "Invalid phone number format"
+  ),
+
   company: z
     .string()
     .trim()
